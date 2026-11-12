@@ -1,0 +1,85 @@
+{
+  "name": "openspec-merge-audit",
+  "version": "0.1.0",
+  "description": "Hourly: find PRs merged into watched repos, then start one conversation per planning store that archives the matching OpenSpec changes and audits specs against code, opening a stacked PR.",
+  "automation": {
+    "schema_version": "openhands.automation.plugin.v1",
+    "entrypoint": {
+      "runner": "script",
+      "command": "python3 scripts/main.py"
+    },
+    "runtime": {
+      "agent_profile": {
+        "required": true,
+        "default_name": "claude-sonnet",
+        "allowed_tools": ["terminal", "file_editor"],
+        "allowed_secret_refs": ["GITHUB_TOKEN"]
+      }
+    },
+    "config_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "stores": {
+          "type": "array",
+          "minItems": 1,
+          "default": [
+            {
+              "store_repo": "chriszhang08/ekkos-planner",
+              "repos": [
+                "chriszhang08/project-ekko-mobile",
+                "chriszhang08/project-ekko-chatbot",
+                "chriszhang08/project-ekko-e2e-runner"
+              ]
+            },
+            {
+              "store_repo": "chriszhang08/odysseus-planner",
+              "repos": ["chriszhang08/odysseus"]
+            }
+          ],
+          "items": {
+            "type": "object",
+            "required": ["store_repo", "repos"],
+            "additionalProperties": false,
+            "properties": {
+              "store_repo": {"type": "string", "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"},
+              "repos": {
+                "type": "array",
+                "minItems": 1,
+                "items": {"type": "string", "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"}
+              }
+            }
+          }
+        },
+        "window_minutes": {
+          "type": "integer",
+          "minimum": 5,
+          "default": 60,
+          "description": "Look-back used on the first run for a store, before a saved poll time exists."
+        },
+        "overlap_minutes": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 10,
+          "description": "Extra look-back on every run to absorb GitHub search-index lag. Handled PRs are de-duplicated."
+        },
+        "stack_warn_depth": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 5,
+          "description": "Open audit PRs in a store at which the new PR body warns about the backlog."
+        },
+        "github_secret": {
+          "type": "string",
+          "default": "GITHUB_TOKEN",
+          "description": "Name of the secret holding the GitHub token. Must be allowed by the agent profile."
+        }
+      }
+    },
+    "suggested_trigger": {
+      "type": "cron",
+      "schedule": "0 * * * *",
+      "timezone": "UTC"
+    }
+  }
+}
