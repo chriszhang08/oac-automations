@@ -278,6 +278,28 @@ class AgentServer:
             raise RuntimeError("no agent profile selected and none active")
         return active
 
+    def _secrets(self, profile_id, github_secret):
+        listing = self._req(
+            "GET", "/api/settings/secrets?" + urllib.parse.urlencode({"agent_profile_id": profile_id})
+        ) or {}
+        out = {}
+        for item in listing.get("secrets", []):
+            out[item["name"]] = {
+                "kind": "LookupSecret",
+                "url": f"{self.url}/api/settings/secrets/{urllib.parse.quote(item['name'])}",
+                "headers": {"X-Session-API-Key": self.key},
+            }
+        # The task and prompt always refer to GITHUB_TOKEN, whatever the secret is named here.
+        if github_secret != "GITHUB_TOKEN":
+            out["GITHUB_TOKEN"] = {
+                "kind": "LookupSecret",
+                "url": f"{self.url}/api/settings/secrets/{urllib.parse.quote(github_secret)}",
+                "headers": {"X-Session-API-Key": self.key},
+            }
+        if "GITHUB_TOKEN" not in out:
+            raise RuntimeError("agent profile does not expose GITHUB_TOKEN")
+        return out
+
     def start(self, conversation_id, profile_id, prompt, workdir, secret_name):
         """Start the conversation once. Safe to call again with the same id."""
         if self.status(conversation_id) is not None:
@@ -290,14 +312,9 @@ class AgentServer:
             "conversation_id": conversation_id,
             "agent_profile_id": profile_id,
             "workspace": {"kind": "LocalWorkspace", "working_dir": workdir},
-            # Only the one secret, fetched lazily by the agent server.
-            "secrets": {
-                "GITHUB_TOKEN": {
-                    "kind": "LookupSecret",
-                    "url": f"{self.url}/api/settings/secrets/{secret_name}",
-                    "headers": {"X-Session-API-Key": self.key},
-                }
-            },
+            # Exactly the secrets the agent profile lists (its own model credentials
+            # plus GITHUB_TOKEN), fetched lazily by the agent server.
+            "secrets": self._secrets(profile_id, secret_name),
             "initial_message": {
                 "role": "user",
                 "content": [{"type": "text", "text": prompt}],
