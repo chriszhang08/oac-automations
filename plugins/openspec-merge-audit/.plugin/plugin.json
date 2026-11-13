@@ -11,7 +11,7 @@
     "runtime": {
       "agent_profile": {
         "required": true,
-        "default_name": "claude-sonnet",
+        "default_name": "audit-profile",
         "allowed_secret_refs": ["GITHUB_TOKEN"]
       }
     },
