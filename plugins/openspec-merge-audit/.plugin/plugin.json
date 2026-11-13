@@ -12,7 +12,6 @@
       "agent_profile": {
         "required": true,
         "default_name": "claude-sonnet",
-        "allowed_tools": ["terminal", "file_editor"],
         "allowed_secret_refs": ["GITHUB_TOKEN"]
       }
     },
