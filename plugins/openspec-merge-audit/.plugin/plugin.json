@@ -27,8 +27,7 @@
               "store_repo": "chriszhang08/ekkos-planner",
               "repos": [
                 "chriszhang08/project-ekko-mobile",
-                "chriszhang08/project-ekko-chatbot",
-                "chriszhang08/project-ekko-e2e-runner"
+                "chriszhang08/project-ekko-chatbot"
               ]
             },
             {
