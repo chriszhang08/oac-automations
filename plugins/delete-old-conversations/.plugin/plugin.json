@@ -1,0 +1,10 @@
+{
+  "name": "delete-old-conversations",
+  "version": "0.1.0",
+  "description": "Weekly: delete agent-server conversations not updated in the last 14 days. No LLM. Set DRY_RUN=1 to list instead of delete; MAX_AGE_DAYS overrides the 14.",
+  "automation": {
+    "schema_version": "openhands.automation.plugin.v1",
+    "entrypoint": {"runner": "script", "command": "python3 scripts/main.py"},
+    "suggested_trigger": {"type": "cron", "schedule": "0 3 * * 1", "timezone": "UTC"}
+  }
+}
