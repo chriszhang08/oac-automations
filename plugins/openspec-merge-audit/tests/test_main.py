@@ -208,6 +208,27 @@ class ProcessStoreTests(unittest.TestCase):
         self.assertEqual((r, agent.started), ("dry-run", []))
 
 
+class StartBodyTests(unittest.TestCase):
+    def test_conversation_is_tagged_for_the_sweeper(self):
+        sent = []
+
+        class A(m.AgentServer):
+            def status(self, cid):
+                return None
+
+            def _secrets(self, profile_id, github_secret):
+                return {}
+
+            def _req(self, method, path, body=None):
+                sent.append((method, path, body))
+
+        import tempfile
+        A("http://x", "k").start("cid", "pid", "task", tempfile.mkdtemp(), "GITHUB_TOKEN")
+        body = sent[-1][2]
+        self.assertEqual(sent[-1][:2], ("POST", "/api/conversations"))
+        self.assertEqual(body["tags"], {"odysseuschange": "planning-store-audit"})
+
+
 class ConfigTests(unittest.TestCase):
     def test_rejects_bad_repo_names(self):
         import json, tempfile
