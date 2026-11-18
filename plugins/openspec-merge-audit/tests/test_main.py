@@ -202,6 +202,15 @@ class ProcessStoreTests(unittest.TestCase):
         self.run_store(gh, agent, state)
         self.assertEqual(state["stores"][STORE]["branch"], "openspec-audit/20261112T110000Z")
 
+    def test_prs_reach_the_agent_in_merge_order(self):
+        late = {**pr(10), "merged_at": "2026-11-12T11:50:00Z"}
+        early = {**pr(11, head="odysseus/pr9-other"), "merged_at": "2026-11-12T08:00:00Z"}
+        agent, state = FakeAgent(), {"stores": {}}
+        self.run_store(FakeGH({IMPL: [late, early]}), agent, state)
+        task = agent.started[0]["prompt"]
+        self.assertLess(task.index('"number": 11'), task.index('"number": 10'))
+        self.assertEqual([p["order"] for p in state["stores"][STORE]["unfinished"]], [1, 2])
+
     def test_dry_run_starts_nothing(self):
         agent = FakeAgent()
         r = m.process_store(self.store, {"stores": {}}, NOW, FakeGH({IMPL: [pr(10)]}), agent, CFG, None, dry_run=True)

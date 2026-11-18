@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Hourly: merged PRs -> one OpenSpec archive-and-audit conversation per store.
+"""Daily: merged PRs -> one OpenSpec archive-and-audit conversation per store.
 
 Deterministic poller. It uses no LLM itself; it only starts a conversation when a
 store has merges to process. Standard library only.
@@ -508,7 +508,9 @@ def process_store(store, state, now, gh, agent, cfg, profile_id, dry_run=False, 
         s["last_poll_ts"] = iso(now)
         return "no-merges"
 
-    for pr in prs:
+    prs.sort(key=lambda p: (p["merged_at"], p["repo"], p["number"]))
+    for i, pr in enumerate(prs, 1):
+        pr["order"] = i
         pr["link"] = parse_link(pr)
 
     branch = s.get("pending_branch") or branch_for(now)

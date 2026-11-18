@@ -1,7 +1,7 @@
 {
   "name": "openspec-merge-audit",
   "version": "0.1.0",
-  "description": "Hourly: find PRs merged into watched repos, then start one conversation per planning store that archives the matching OpenSpec changes and audits specs against code, opening a stacked PR.",
+  "description": "Daily: find every PR merged into the watched repos since the last run, then start one conversation per planning store that archives the matching OpenSpec changes, reconciles specs across OSOWs, audits them against code, and opens a stacked PR with the merge order.",
   "automation": {
     "schema_version": "openhands.automation.plugin.v1",
     "entrypoint": {
@@ -52,8 +52,8 @@
         "window_minutes": {
           "type": "integer",
           "minimum": 5,
-          "default": 60,
-          "description": "Look-back used on the first run for a store, before a saved poll time exists."
+          "default": 1440,
+          "description": "Look-back used on the first run for a store, before a saved poll time exists. Later runs start where the last one ended, so a missed day is caught up."
         },
         "overlap_minutes": {
           "type": "integer",
@@ -76,7 +76,7 @@
     },
     "suggested_trigger": {
       "type": "cron",
-      "schedule": "0 * * * *",
+      "schedule": "0 2 * * *",
       "timezone": "UTC"
     }
   }

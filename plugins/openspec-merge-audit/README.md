@@ -1,11 +1,11 @@
 # openspec-merge-audit
 
-Hourly cron automation (script runner, no LLM in the poller).
+Daily cron automation at 02:00 UTC (script runner, no LLM in the poller). One run covers everything merged since the previous run, so a missed day is caught up.
 
-1. Per store, search the watched repos for PRs merged into their default branch since the last poll (with a 10 minute overlap; handled PRs are de-duplicated).
+1. Per store, search the watched repos for PRs merged into their default branch since the last poll (with a 10 minute overlap; handled PRs are de-duplicated), and sort them in merge order.
 2. Link a PR to its planning change by head branch `odysseus/pr<N>-<change-id>`. Fork branches are never linked.
 3. Skip a store whose previous conversation is still running. Re-send PRs from a conversation that ended in error, at most twice.
-4. Start one conversation per store with merges. It archives the linked changes, audits specs against code, and opens a PR in the store repo.
+4. Start one conversation per store with merges. It plans the whole batch, archives the linked changes in merge order, reconciles specs touched by more than one OSOW, audits each affected spec once against code, and opens a PR in the store repo. The PR lists the cross-OSOW specs and the order to merge things in. The agent never merges anything.
 
 ## Naming and stacking
 
