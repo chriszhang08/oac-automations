@@ -4,7 +4,6 @@ OpenHands plugin-spec automations.
 
 | Plugin | What it does |
 |---|---|
-| [`linear-issue-triage`](plugins/linear-issue-triage) | Every 5 minutes: classify new EkkoLLM issues with existing labels and link clear duplicates or related work. |
 | [`openspec-merge-audit`](plugins/openspec-merge-audit) | Hourly: finds merged PRs in watched repos, then archives the matching OpenSpec changes and audits specs against code in the planning store, opening a stacked PR. |
 | [`claude-haiku-healthcheck`](plugins/claude-haiku-healthcheck) | Every 5 hours: asks the `claude-haiku` agent profile "what model are you" and checks the turn finishes, as a lightweight health check of that profile's endpoint. |
 | [`delete-planning-store-audit-conversations`](plugins/delete-planning-store-audit-conversations) | Daily 03:00 UTC: deletes finished conversations tagged `temporary` (the tag `openspec-merge-audit` and `claude-haiku-healthcheck` set). |
