@@ -316,8 +316,8 @@ class AgentServer:
             "tags": dict(CONVERSATION_TAGS),
             "agent_profile_id": profile_id,
             "workspace": {"kind": "LocalWorkspace", "working_dir": workdir},
-            # Exactly the secrets the agent profile lists (its own model credentials
-            # plus GITHUB_TOKEN), fetched lazily by the agent server.
+            # Every secret the agent profile lists, fetched lazily by the agent
+            # server. The automation does not restrict which secrets those are.
             "secrets": self._secrets(profile_id, secret_name),
             "initial_message": {
                 "role": "user",
