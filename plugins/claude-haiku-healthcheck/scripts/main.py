@@ -10,6 +10,7 @@ import os
 import sys
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 import uuid
 from pathlib import Path
@@ -19,6 +20,10 @@ CONVERSATION_TAGS = {"temporary": "true"}
 POLL_INTERVAL_SECONDS = 5
 MAX_WAIT_SECONDS = 180
 TERMINAL_STATUSES = ("finished", "error", "stuck")
+# The claude-haiku agent profile wraps the Claude Code ACP agent, which needs
+# its own auth credential to start a turn at all (ACPAuthRequired otherwise) -
+# this is not a tool secret, so it's the only one passed into the conversation.
+ACP_AUTH_SECRET = "CLAUDE_CODE_OAUTH_TOKEN"
 
 BASE = os.environ["AGENT_SERVER_URL"].rstrip("/")
 KEY = os.environ.get("SESSION_API_KEY") or os.environ.get("OH_SESSION_API_KEYS_0", "")
@@ -96,7 +101,13 @@ def main():
                 "tags": dict(CONVERSATION_TAGS),
                 "agent_profile_id": profile_id,
                 "workspace": {"kind": "LocalWorkspace", "working_dir": workdir},
-                "secrets": {},
+                "secrets": {
+                    ACP_AUTH_SECRET: {
+                        "kind": "LookupSecret",
+                        "url": f"{BASE}/api/settings/secrets/{urllib.parse.quote(ACP_AUTH_SECRET)}",
+                        "headers": {"X-Session-API-Key": KEY},
+                    }
+                },
                 "initial_message": {
                     "role": "user",
                     "content": [{"type": "text", "text": PROMPT}],
