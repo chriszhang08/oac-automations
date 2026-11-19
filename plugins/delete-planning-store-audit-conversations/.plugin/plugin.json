@@ -1,7 +1,7 @@
 {
   "name": "delete-planning-store-audit-conversations",
   "version": "0.1.0",
-  "description": "Daily: delete finished conversations tagged odysseuschange=planning-store-audit, such as those started by openspec-merge-audit. No LLM.",
+  "description": "Daily: delete finished conversations tagged temporary, such as those started by openspec-merge-audit or claude-haiku-healthcheck. No LLM.",
   "automation": {
     "schema_version": "openhands.automation.plugin.v1",
     "entrypoint": {"runner": "script", "command": "python3 scripts/main.py"},

@@ -32,7 +32,7 @@ HEAD_RE = re.compile(r"^odysseus/pr(\d+)-([A-Za-z0-9][A-Za-z0-9._-]*)$")
 REPO_RE = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
 # The "Delete planning-store-audit conversations" automation deletes every finished
 # conversation carrying this tag. Keep it in step with that automation.
-CONVERSATION_TAGS = {"odysseuschange": "planning-store-audit"}
+CONVERSATION_TAGS = {"temporary": "true"}
 HANDLED_LIMIT = 500
 MAX_RETRIES = 2
 SEARCH_MAX_PAGES = 3

@@ -1,0 +1,23 @@
+{
+  "name": "claude-haiku-healthcheck",
+  "version": "0.1.0",
+  "description": "Every 5 hours: asks the claude-haiku agent profile \"what model are you\" and checks the turn finishes, as a lightweight health check of that profile's endpoint. No LLM reasoning in the script itself; tags the conversation temporary=true so the delete-planning-store-audit-conversations sweeper cleans it up.",
+  "automation": {
+    "schema_version": "openhands.automation.plugin.v1",
+    "entrypoint": {
+      "runner": "script",
+      "command": "python3 scripts/main.py"
+    },
+    "runtime": {
+      "agent_profile": {
+        "required": true,
+        "default_name": "claude-haiku"
+      }
+    },
+    "suggested_trigger": {
+      "type": "cron",
+      "schedule": "0 */5 * * *",
+      "timezone": "UTC"
+    }
+  }
+}

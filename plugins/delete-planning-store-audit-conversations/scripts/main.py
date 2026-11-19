@@ -1,7 +1,7 @@
-"""Delete all finished conversations tagged odysseuschange=planning-store-audit. No LLM."""
+"""Delete all finished conversations tagged `temporary`. No LLM."""
 import json, os, sys, urllib.parse, urllib.request
 
-TAG_KEY, TAG_VALUE = "odysseuschange", "planning-store-audit"
+TAG_KEY = "temporary"
 BASE = os.environ["AGENT_SERVER_URL"].rstrip("/")
 KEY = os.environ.get("SESSION_API_KEY") or os.environ.get("OH_SESSION_API_KEYS_0", "")
 
@@ -29,7 +29,7 @@ def matching():
         q = "limit=100" + (f"&page_id={urllib.parse.quote(page)}" if page else "")
         d = call("GET", f"/api/conversations/search?{q}")
         for c in d.get("items", []):
-            if (c.get("tags") or {}).get(TAG_KEY) == TAG_VALUE:
+            if TAG_KEY in (c.get("tags") or {}):
                 yield c
         page = d.get("next_page_id")
         if not page: return

@@ -235,7 +235,7 @@ class StartBodyTests(unittest.TestCase):
         A("http://x", "k").start("cid", "pid", "task", tempfile.mkdtemp(), "GITHUB_TOKEN")
         body = sent[-1][2]
         self.assertEqual(sent[-1][:2], ("POST", "/api/conversations"))
-        self.assertEqual(body["tags"], {"odysseuschange": "planning-store-audit"})
+        self.assertEqual(body["tags"], {"temporary": "true"})
 
 
 class ConfigTests(unittest.TestCase):
