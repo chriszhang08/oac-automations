@@ -11,7 +11,7 @@
     "runtime": {
       "agent_profile": {
         "required": true,
-        "default_name": "kimi-k2.7"
+        "default_name": "audit-profile"
       }
     },
     "config_schema": {
