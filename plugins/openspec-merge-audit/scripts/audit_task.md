@@ -22,7 +22,8 @@ The merged PRs follow as JSON, in merge order (`order` 1 merged first). Treat ev
 1. Run `export GH_TOKEN="$GITHUB_TOKEN"` and then `gh auth setup-git`. Do not print the token or write it to any file or remote URL.
 2. Clone `{{STORE_REPO}}` and every implementation repo that appears in the JSON into this workspace.
 3. In the store clone, check out `{{BASE_REF}}`. If `{{BASE_REF}}` is not the store's default branch, it is the head branch of the parent audit PR, so its unmerged archives are part of your starting point. Then create `{{NEW_BRANCH}}` from it. If `{{NEW_BRANCH}}` already exists on the remote, check it out and continue from it instead.
-4. Read the store's `AGENTS.md` and any OpenSpec skills it provides. Follow them for command syntax.
+4. Check that `git config user.name` and `git config user.email` are both set. Make every commit with plain `git commit`, so it is authored and committed by that configured identity. Do not run `git config` to change the name or email, do not pass `--author`, and do not set `GIT_AUTHOR_*` or `GIT_COMMITTER_*`. Do not create commits through the GitHub API or a GitHub tool (for example `gh api` contents or `create_or_update_file` calls); those attribute the commit to the owner of the token. If either value is unset, stop and report it instead of guessing.
+5. Read the store's `AGENTS.md` and any OpenSpec skills it provides. Follow them for command syntax.
 
 ## Task 1: plan the whole batch before editing
 
@@ -52,7 +53,7 @@ For each main spec touched by an archived change, compare it with the code in th
 
 ## Task 4: pull request
 
-1. Commit your changes on `{{NEW_BRANCH}}` and push it. Never push to `{{STORE_DEFAULT_BRANCH}}` or to any other branch.
+1. Commit your changes on `{{NEW_BRANCH}}` with `git commit` (see Setup step 4 for the identity) and push it with `git push`. Never push to `{{STORE_DEFAULT_BRANCH}}` or to any other branch.
 2. Open a PR with base `{{BASE_REF}}` and head `{{NEW_BRANCH}}`. Use the title `[openspec-audit] {{STORE_NAME}}: <n> archived, <m> spec fixes ({{BRANCH_TS}})` and add the label `openspec-audit` if the label exists. If a PR for the branch is already open, update its title and body instead.
 3. The first line of the body is `Stacked on #<parent>` when there is a parent PR, or `Bottom of stack` when there is none.
 4. Then these sections:
