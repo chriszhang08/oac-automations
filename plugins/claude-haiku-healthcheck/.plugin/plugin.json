@@ -1,7 +1,7 @@
 {
   "name": "claude-haiku-healthcheck",
-  "version": "0.1.0",
-  "description": "Every 5 hours: asks the claude-haiku agent profile \"what model are you\" and checks the turn finishes, as a lightweight health check of that profile's endpoint. No LLM reasoning in the script itself; tags the conversation temporary=true so the delete-planning-store-audit-conversations sweeper cleans it up.",
+  "version": "0.2.0",
+  "description": "Every 6 hours (03:00, 09:00, 15:00, 21:00 UTC): finds open [openspec-audit] PRs in the planning store, and if their CI has an `openspec validate` failure, starts a claude-haiku conversation that fixes and pushes it. No failure means a successful no-op. Tags the conversation temporary=true for the sweeper.",
   "automation": {
     "schema_version": "openhands.automation.plugin.v1",
     "entrypoint": {
@@ -16,8 +16,32 @@
     },
     "suggested_trigger": {
       "type": "cron",
-      "schedule": "0 */5 * * *",
+      "schedule": "0 3,9,15,21 * * *",
       "timezone": "UTC"
+    },
+    "config_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "store_repo": {
+          "type": "string",
+          "default": "chriszhang08/odysseus-planner",
+          "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
+        },
+        "title_prefix": {
+          "type": "string",
+          "default": "[openspec-audit]"
+        },
+        "validate_marker": {
+          "type": "string",
+          "default": "openspec validate",
+          "description": "Substring of the failing CI step name that counts as a validate failure."
+        },
+        "github_secret": {
+          "type": "string",
+          "default": "GITHUB_TOKEN"
+        }
+      }
     }
   }
 }
